@@ -13,6 +13,17 @@ def evaluate_model(y_test, probs_test, preds_test):
     bs = brier_score(y_test, probs_test)
     return acc, ll, bs
 
+def plot_reliability_single(y_test, probs, label, title, filename):
+    plt.figure()
+    reliability_diagram(y_test, probs, label=label)
+    plt.plot([0, 1], [0, 1], "--", label="Perfect")
+    plt.xlabel("Predicted probability")
+    plt.ylabel("True frequency")
+    plt.legend()
+    plt.title(title)
+    plt.savefig(filename, dpi=300)
+    plt.show()
+    plt.close()
 
 def print_results(title, preds, acc, ll, bs):
     print(f"- {title} -")
@@ -64,6 +75,26 @@ def run_experiment(dataset_name, loader):
     acc_iso, ll_iso, bs_iso = evaluate_model(y_test, probTestIso, predsTestIso)
     print_results("Logistic + Isotonic", predsTestIso, acc_iso, ll_iso, bs_iso)
 
+    plot_reliability_single(
+        y_test, probs_test,
+        "Logistic",
+        f"Reliability Diagram - Logistic - {dataset_name}",
+        f"Figure_Logistic_{dataset_name}.png"
+    )
+
+    plot_reliability_single(
+        y_test, probTestIso,
+        "Logistic + Isotonic",
+        f"Reliability Diagram - Logistic + Isotonic - {dataset_name}",
+        f"Figure_Logistic_Iso_{dataset_name}.png"
+    )
+
+    plot_reliability_single(
+        y_test, probTestPlatt,
+        "Logistic + Platt",
+        f"Reliability Diagram - Logistic + Platt - {dataset_name}",
+        f"Figure_Logistic_Platt_{dataset_name}.png"
+    )
 
     plt.figure()
     reliability_diagram(y_test, probs_test, label="Logistic")
@@ -113,6 +144,27 @@ def run_experiment(dataset_name, loader):
         y_test, probTestIsoRf, predsTestIsoRf
     )
     print_results("Random Forest + Isotonic", predsTestIsoRf, acc_iso_rf, ll_iso_rf, bs_iso_rf)
+
+    plot_reliability_single(
+        y_test, probs_test_rf,
+        "Random Forest",
+        f"Reliability Diagram - Random Forest - {dataset_name}",
+        f"Figure_RF_{dataset_name}.png"
+    )
+
+    plot_reliability_single(
+        y_test, probTestIsoRf,
+        "RF + Isotonic",
+        f"Reliability Diagram - RF + Isotonic - {dataset_name}",
+        f"Figure_RF_Iso_{dataset_name}.png"
+    )
+
+    plot_reliability_single(
+        y_test, probTestPlattRf,
+        "RF + Platt",
+        f"Reliability Diagram - RF + Platt - {dataset_name}",
+        f"Figure_RF_Platt_{dataset_name}.png"
+    )
 
     # Reliability diagram Random Forest
     plt.figure()

@@ -9,7 +9,7 @@ from sklearn.compose import ColumnTransformer
 
 def load_adult_dataset(random_state=42):
 
-    # 1. Caricamento dataset
+    # caricamento dataset
 
     adult = fetch_openml(name='adult', version=2, as_frame=True)
     X = adult.data
@@ -37,8 +37,8 @@ def load_adult_dataset(random_state=42):
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', StandardScaler(), numerical_cols), #numeri trasformati in -1, 0, 1...
-            ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), categorical_cols) #colonne divise non in 1,2,3 ma 100 010 001 es.
+            ('num', StandardScaler(), numerical_cols), #transforming numbers (-1, 0, 1)
+            ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), categorical_cols) #dividing binary columns (001, 010, 100)
         ]
     )
 

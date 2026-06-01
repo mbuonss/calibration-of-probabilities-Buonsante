@@ -20,16 +20,16 @@ class LogisticRegression:
 
         for _ in range(self.num_iter):
             # avanti
-            z = X_bias @ self.theta
-            y_pred = self._sigmoid(z)
+            z = X_bias @ self.theta #(score lineare, comb. feature + pesi)
+            y_pred = self._sigmoid(z) #trasformo score in probabilità con sigmoid
 
             # gradiente
-            grad = (X_bias.T @ (y_pred - y)) / n_samples
+            grad = (X_bias.T @ (y_pred - y)) / n_samples #aiuta prediction? aumento peso, altrimenti diminuisce
 
             # aggiornamento
-            self.theta -= self.lr * grad
+            self.theta -= self.lr * grad #gradient descent
 
-            # condizione di stoè
+            # condizione di stop
             if np.linalg.norm(grad) < self.tol:
                 break
 

@@ -9,16 +9,16 @@ def log_loss(y_true, y_prob):
     )
 
 def brier_score(y_true, y_prob):
-    return np.mean((y_prob - y_true) ** 2)
+    return np.mean((y_prob - y_true) ** 2) #quanto la probabilità predetta è distante dalla realtà?
 
 def accuracy(y_true, y_pred):
-    return (y_true == y_pred).mean()
+    return (y_true == y_pred).mean() #confronto elementi + pred corrette/n
 
 def reliability_diagram(y_true, probs, n_bins=10, label=None):
     bins = np.linspace(0, 1, n_bins + 1)
     bin_ids = np.digitize(probs, bins) - 1   #trasforma e ti dice in quale intervallo cade
 
-    bin_true = [] #freq reale
+    bin_true = [] #frequenza reale
     bin_pred = [] # freq predetta
 
     for i in range(n_bins):

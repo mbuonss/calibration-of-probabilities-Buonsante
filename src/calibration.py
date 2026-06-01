@@ -25,22 +25,22 @@ class Isotonic:
         probs = np.asarray(probs)
         y = np.asarray(y)
 
-        # 1. Ordina in base alle probabilità predette
-        order = np.argsort(probs)
+        # ordina in base alle probabilità predette
+        order = np.argsort(probs) #restituisce indici per l'ordine delle prob
         probs_sorted = probs[order]
         y_sorted = y[order]
 
-        # 2. Crea blocchi iniziali
+        # crea blocchi iniziali
         blocks = []
         for p, target in zip(probs_sorted, y_sorted):
             blocks.append({
-                "sum_y": target,
-                "count": 1,
+                "sum_y": target, #somma label vere
+                "count": 1, #num elementi nel blocco
                 "min_prob": p,
                 "max_prob": p
             })
 
-            # 3. Pool Adjacent Violators
+            # pool Adjacent Violators
             while len(blocks) >= 2:
                 last = blocks[-1]
                 prev = blocks[-2]

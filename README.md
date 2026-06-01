@@ -41,7 +41,7 @@ The project includes custom implementations of classification models, calibratio
 
 ## Project Structure
 
-text
+```text
 ├── main/
 │   └── main.py
 │       # Main script used to run the experiments
@@ -66,7 +66,7 @@ text
 │   # Final project report
 │
 └── README.md
-
+```
 
 ---
 
@@ -84,9 +84,9 @@ pip install numpy pandas matplotlib scikit-learn
 
 To execute the project, run the following command from the repository root:
 
-bash
+```bash
 python -m main.main
-
+```
 
 ---
 
@@ -109,10 +109,10 @@ The plots are:
 
 Example output files:
 
-text
+```text
 Figure_Logistic_Adult.png
 Figure_RF_Iso_BreastCancer.png
-
+```
 
 ---
 

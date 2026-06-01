@@ -74,9 +74,9 @@ The project includes custom implementations of classification models, calibratio
 
 The project requires *Python 3.x* and the following libraries:
 
-bash
+```bash
 pip install numpy pandas matplotlib scikit-learn
-
+```
 
 ---
 

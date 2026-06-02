@@ -59,7 +59,7 @@ The project includes custom implementations of classification models, calibratio
 │   ├── metrics.py
 │   │   # Evaluation metrics and plotting utilities
 │   │
-│   └── Random_Forest.py
+│   └── random_forest.py
 │       # Custom Decision Tree and Random Forest implementations
 │
 ├── Report - Calibration_Project_Buonsante.pdf

@@ -12,10 +12,12 @@ This repository contains the implementation of the project for the Statistical M
 
 The objective of the project is to evaluate and improve the reliability of probabilistic predictions produced by machine learning classifiers through post-processing calibration techniques.
 
-All algorithms have been implemented *from scratch* using only:
+### Key Highlights & Methodology:
+- **Base Models:** Logistic Regression and Random Forest (trained via `scikit-learn`).
+- **Custom Post-Processing Calibration (From Scratch):**
+  - **Platt Scaling:** Logistic transformation on raw output probabilities.
+  - **Isotonic Regression:** Non-parametric calibration using the **Pool Adjacent Violators (PAV)** algorithm implemented from scratch.
 
-- numpy for numerical computations
-- matplotlib for visualizations
 
 The project includes custom implementations of classification models, calibration methods, evaluation metrics, and reliability diagrams.
 

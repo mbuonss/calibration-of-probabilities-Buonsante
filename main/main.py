@@ -1,18 +1,21 @@
 from matplotlib import pyplot as plt
 
-from src.data_loader import load_adult_dataset, load_breast_cancer_dataset
-from src.logistic_regression import LogisticRegression
-from src.metrics import accuracy, log_loss, brier_score, reliability_diagram
-from src.calibration import Isotonic, PlattScal
-from src.random_forest import RandomForest
+from src.utils.data_loader import load_adult_dataset, load_breast_cancer_dataset
+from sklearn.linear_model import LogisticRegression
+from src.utils.metrics import accuracy, log_loss, brier_score, reliability_diagram
+from src.utils.calibration import Isotonic, PlattScal
+from sklearn.ensemble import RandomForestClassifier
 
 
+# evaluation metrics
 def evaluate_model(y_test, probs_test, preds_test):
     acc = accuracy(y_test, preds_test)
     ll = log_loss(y_test, probs_test)
     bs = brier_score(y_test, probs_test)
     return acc, ll, bs
 
+
+# plotting
 def plot_reliability_single(y_test, probs, label, title, filename):
     plt.figure()
     reliability_diagram(y_test, probs, label=label)
@@ -45,13 +48,22 @@ def evaluate_calibrated_model(
         y_test,
 ):
 
+    # training only on training data
     model.fit(X_train, y_train)
 
-    probs_val = model.pred_probab(X_val)
-    probs_test = model.pred_probab(X_test)
+    #probabilities on validation set with only second column (positive)
+    probs_val = model.predict_proba(X_val)[:, 1]
+
+    #non calibrated probabilities on positive class
+    probs_test = model.predict_proba(X_test)[:, 1]
+
+    #final prediction on default threshold
     preds_test = model.predict(X_test)
 
     acc, ll, bs = evaluate_model(y_test, probs_test, preds_test)
+
+
+    #results before calibration
     print_results(
         f"{model_name} (not calibrated)",
         preds_test,
@@ -60,13 +72,16 @@ def evaluate_calibrated_model(
         bs
     )
 
-    # Platt
+    # platt
     platt = PlattScal()
     platt.fit(probs_val, y_val)
 
     probs_platt = platt.pred_probab(probs_test)
+
+    #conversion of binary entries
     preds_platt = (probs_platt >= 0.5).astype(int)
 
+    #re-calculation after platt's prob and predictions
     acc_platt, ll_platt, bs_platt = evaluate_model(
         y_test,
         probs_platt,
@@ -81,7 +96,7 @@ def evaluate_calibrated_model(
         bs_platt
     )
 
-    # Isotonic
+    # isotonic
     isotonic = Isotonic()
     isotonic.fit(probs_val, y_val)
 
@@ -114,40 +129,11 @@ def run_experiment(dataset_name, loader):
     X_train, X_val, X_test, y_train, y_val, y_test = loader()
 
 
-    # #Logistic Regression
-    # model = LogisticRegression(lr=0.1, num_iter=1000)
-    # model.fit(X_train, y_train)
-    #
-    # probs_val = model.pred_probab(X_val)
-    # probs_test = model.pred_probab(X_test)
-    # preds_test = model.predict(X_test)
-    #
-    # acc, ll, bs = evaluate_model(y_test, probs_test, preds_test)
-    # print_results("Logistic Regression (not calibrated)", preds_test, acc, ll, bs)
-    #
-    # #Platt Logistic
-    # platt = PlattScal()
-    # platt.fit(probs_val, y_val)
-    #
-    # prob_test_platt = platt.pred_probab(probs_test)
-    # preds_test_platt = (prob_test_platt >= 0.5).astype(int)
-    #
-    # acc_platt, ll_platt, bs_platt = evaluate_model(y_test, prob_test_platt, preds_test_platt)
-    # print_results("Logistic + Platt", preds_test_platt, acc_platt, ll_platt, bs_platt)
-    #
-    # #Isotonic Logistic
-    # isotonic = Isotonic()
-    # isotonic.fit(probs_val, y_val)
-    #
-    # prob_test_iso = isotonic.pred_probab(probs_test)
-    # preds_test_iso = (prob_test_iso >= 0.5).astype(int)
-    #
-    # acc_iso, ll_iso, bs_iso = evaluate_model(y_test, prob_test_iso, preds_test_iso)
-    # print_results("Logistic + Isotonic", preds_test_iso, acc_iso, ll_iso, bs_iso)
+
 
     probs_test, prob_test_platt, prob_test_iso = (
         evaluate_calibrated_model(
-            LogisticRegression(lr=0.1, num_iter=1000),
+            LogisticRegression(max_iter=1000),
             "Logistic Regression",
             X_train,
             X_val,
@@ -193,48 +179,16 @@ def run_experiment(dataset_name, loader):
     plt.close()
 
 
-    # #RF
-    # rf = RandomForest(n_trees=10, max_depth=8, min_samples_split=2, n_features=20)
-    # rf.fit(X_train, y_train)
-    #
-    # probs_val_rf = rf.pred_probab(X_val)
-    # probs_test_rf = rf.pred_probab(X_test)
-    # preds_test_rf = rf.predict(X_test)
-    #
-    # acc_rf, ll_rf, bs_rf = evaluate_model(y_test, probs_test_rf, preds_test_rf)
-    # print_results("Random Forest (not calibrated)", preds_test_rf, acc_rf, ll_rf, bs_rf)
-    #
-    # #Platt Random Forest
-    # platt_rf = PlattScal()
-    # platt_rf.fit(probs_val_rf, y_val)
-    #
-    # prob_test_platt_rf = platt_rf.pred_probab(probs_test_rf)
-    # preds_test_platt_rf = (prob_test_platt_rf >= 0.5).astype(int)
-    #
-    # acc_platt_rf, ll_platt_rf, bs_platt_rf = evaluate_model(
-    #     y_test, prob_test_platt_rf, preds_test_platt_rf
-    # )
-    # print_results("Random Forest + Platt", preds_test_platt_rf, acc_platt_rf, ll_platt_rf, bs_platt_rf)
-    #
-    # # Isotonic on Random Forest
-    # isotonic_rf = Isotonic()
-    # isotonic_rf.fit(probs_val_rf, y_val)
-    #
-    # prob_test_iso_rf = isotonic_rf.pred_probab(probs_test_rf)
-    # preds_test_iso_rf = (prob_test_iso_rf >= 0.5).astype(int)
-    #
-    # acc_iso_rf, ll_iso_rf, bs_iso_rf = evaluate_model(
-    #     y_test, prob_test_iso_rf, preds_test_iso_rf
-    # )
-    # print_results("Random Forest + Isotonic", preds_test_iso_rf, acc_iso_rf, ll_iso_rf, bs_iso_rf)
+
 
     probs_test_rf, prob_test_platt_rf, prob_test_iso_rf = (
         evaluate_calibrated_model(
-            RandomForest(
-                n_trees=10,
+            RandomForestClassifier(
+                n_estimators=200,
                 max_depth=8,
                 min_samples_split=2,
-                n_features=20
+                max_features=20,
+                random_state=42
             ),
             "Random Forest",
             X_train,

@@ -55,14 +55,8 @@ The project includes custom implementations of classification models, calibratio
 │   ├── data_loader.py
 │   │   # Dataset loading and preprocessing
 │   │
-│   ├── logistic_regression.py
-│   │   # From-scratch Logistic Regression
-│   │
-│   ├── metrics.py
-│   │   # Evaluation metrics and plotting utilities
-│   │
-│   └── random_forest.py
-│       # Custom Decision Tree and Random Forest implementations
+│   └── metrics.py
+│       # Evaluation metrics and plotting utilities
 │
 ├── Report - Calibration_Project_Buonsante.pdf
 │   # Final project report

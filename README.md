@@ -27,7 +27,7 @@ The project includes custom implementations of classification models, calibratio
 
 ### Classification Algorithms
 - Logistic Regression
-- Random Forest built on top of custom Decision Trees
+- Random Forest
 
 ### Calibration Techniques
 - Platt Scaling
